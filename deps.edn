@@ -1,0 +1,10 @@
+{:deps {clj-python/libpython-clj {:mvn/version "2.00-beta-14"}
+        medley/medley {:mvn/version "1.3.0"}
+        probcomp/inferenceql.inference {:git/url "git@github.com:probcomp/inferenceql.inference.git"
+                                        :sha "874616caac2ed7a82e0af87e9e536d00fbcb4ae7"}}
+ :aliases {:test {:extra-paths ["test/src"
+                                "test/resources"]
+                  :extra-deps {org.clojure/test.check {:mvn/version "0.10.0"}
+                               lambdaisland/kaocha {:mvn/version "1.0-612"}}}
+           :readme {:extra-deps {seancorfield/readme {:mvn/version "1.0.13"}}
+                    :main-opts ["-m" "seancorfield.readme"]}}}

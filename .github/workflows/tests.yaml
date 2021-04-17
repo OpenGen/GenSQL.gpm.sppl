@@ -1,0 +1,67 @@
+name: tests
+on: push
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.4'
+
+      - name: Setup Clojure tools
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          tools-deps: 1.10.1.739
+
+      - name: Setup node
+        uses: actions/setup-node@v1
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install ws
+        run: npm install ws
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Cache m2
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: m2-${{ hashFiles('deps.edn') }}
+
+      - name: Cache gitlibs
+        uses: actions/cache@v2
+        with:
+          path: ~/.gitlibs
+          key: gitlibs-${{ hashFiles('deps.edn') }}
+
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip # This path is specific to Ubuntu
+          key: pip-${{ hashFiles('requirements.txt', 'requirements-sppl.txt') }}
+
+      - name: Prepare Clojure dependencies
+        run: clojure -M:readme:test -P
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install --no-deps "$(cat requirements-sppl.txt)"
+
+      - name: Run tests in README
+        run: clojure -M:readme
+
+      - name: Run tests
+        run: bin/kaocha --reporter documentation --plugin kaocha.plugin/profiling

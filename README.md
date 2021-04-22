@@ -1,4 +1,6 @@
 # inferenceql.gpm.spn
+![tests](https://github.com/probcomp/inferenceql.gpm.spn/workflows/tests/badge.svg)
+![linter](https://github.com/probcomp/inferenceql.gpm.spn/workflows/linter/badge.svg)
 
 An implementation of the [generative probabilistic model](https://github.com/probcomp/inferenceql.inference) interface that delegates to a sum-product network.
 

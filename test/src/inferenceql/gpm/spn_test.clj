@@ -2,7 +2,16 @@
   (:refer-clojure :exclude [slurp])
   (:require [clojure.java.io :as io]
             [clojure.test :refer [deftest is]]
-            [inferenceql.gpm.spn :as spn]))
+            [inferenceql.gpm.spn :as spn]
+            [inferenceql.inference.gpm :as gpm]))
 
 (deftest slurp
-  (is (instance? inferenceql.gpm.spn.SPN (spn/slurp (io/resource "model.json")))))
+  (let [spn? (fn [x]
+               (instance? inferenceql.gpm.spn.SPN x))
+        spn (spn/slurp (io/resource "model.json"))]
+    (is (spn? spn))))
+
+(deftest logprob
+  (let [spn (spn/slurp (io/resource "model.json"))]
+    (is (= 1.0 (+ (Math/exp (gpm/logprob spn '(>= height 170)))
+                  (Math/exp (gpm/logprob spn '(< height 170))))))))

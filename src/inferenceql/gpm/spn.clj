@@ -69,6 +69,15 @@
            (first)
            (dict->map))))
 
+  proto/LogProb
+  (logprob [_ event]
+    (let [opts {:operation? seq?
+                :operator first
+                :operands rest
+                :variable? symbol?}
+          event (tree->event event opts)]
+      (python/call-attr spn "logprob" event)))
+
   proto/Condition
   (condition [_ conditions]
     (-> spn

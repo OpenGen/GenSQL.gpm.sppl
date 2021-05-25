@@ -79,10 +79,12 @@
       (python/call-attr spn "logprob" event)))
 
   proto/Condition
-  (condition [_ conditions]
-    (-> spn
-        (python/call-attr "constrain" (map->dict conditions))
-        (->SPN)))
+  (condition [this conditions]
+    (if-not (seq conditions)
+      this
+      (-> spn
+          (python/call-attr "constrain" (map->dict conditions))
+          (->SPN))))
 
   proto/Constrain
   (constrain [_ event opts]

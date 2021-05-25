@@ -5,13 +5,19 @@
             [inferenceql.gpm.spn :as spn]
             [inferenceql.inference.gpm :as gpm]))
 
+(defn spn?
+  [x]
+  (instance? inferenceql.gpm.spn.SPN x))
+
+(def spn (spn/slurp (io/resource "model.json")))
+
 (deftest slurp
-  (let [spn? (fn [x]
-               (instance? inferenceql.gpm.spn.SPN x))
-        spn (spn/slurp (io/resource "model.json"))]
-    (is (spn? spn))))
+  (is (spn? spn)))
+
+(deftest condition
+  (is (spn? (gpm/condition spn {})))
+  (is (spn? (gpm/condition spn {:gender "female"}))))
 
 (deftest logprob
-  (let [spn (spn/slurp (io/resource "model.json"))]
-    (is (= 1.0 (+ (Math/exp (gpm/logprob spn '(>= height 170)))
-                  (Math/exp (gpm/logprob spn '(< height 170))))))))
+  (is (= 1.0 (+ (Math/exp (gpm/logprob spn '(>= height 170)))
+                (Math/exp (gpm/logprob spn '(< height 170)))))))

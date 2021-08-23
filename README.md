@@ -32,6 +32,12 @@ Next, initialize [libpython-clj](https://github.com/clj-python/libpython-clj):
 (python/initialize!)
 ```
 
+Make note of the Python executable being used in the output of `python/initialize!`. If you would like to use a different Python executable you can specify it explicitly:
+
+``` clojure
+(python/initialize! :python-executable "/path/to/python")
+```
+
 For more information, including documentation about how to initialize libpython on a system where multiple versions of Python are installed, refer to [libpython-clj's documentation](https://clj-python.github.io/libpython-clj/).
 
 Next, define the model and the dataset to be queried, parsing columns as needed:

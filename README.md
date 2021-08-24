@@ -43,20 +43,19 @@ For more information, including documentation about how to initialize libpython 
 Next, define the model and the dataset to be queried, parsing columns as needed:
 
 ``` clojure
-(require '[inferenceql.gpm.spn :as spn]
+(require '[clojure.edn :as edn]
+         '[inferenceql.gpm.spn :as spn]
+         '[inferenceql.query.data :as data]
          '[inferenceql.query.main :as main]
          '[medley.core :as medley])
 
 (def model (spn/slurp "path/to/model.json"))
+(def schema (edn/read-string (slurp "path/to/schema.edn")))
 
 (def data
   (into []
-        (map (fn [row]
-               (-> row
-                   (medley/update-existing :column1 parse-column1)
-                   (medley/update-existing :column2 parse-column2)
-                   ...)))
-        (main/slurp-csv "path/to/csv")))
+        (map (data/row-coercer schema))
+        (main/slurp-csv "path/to/data.csv")))
 ```
 
 Finally, launch the REPL:

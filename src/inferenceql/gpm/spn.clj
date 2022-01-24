@@ -20,21 +20,26 @@
     or "__or__"})
 
 (defn ^:private tree->event
-  [node {:keys [operation? operator operands variable?] :as opts}]
-  (cond (operation? node)
-        (let [operator (operator node)
-              attr (get attrs operator)
-              [lhs rhs] (map #(tree->event % opts)
-                             (operands node))]
-          (if (= "__lshift__" attr)
-            (python/call-attr lhs attr #{rhs})
-            (python/call-attr lhs attr rhs)))
+  ([node]
+   (tree->event node {:operation? seq?
+                      :operator first
+                      :operands rest
+                      :variable? symbol?}))
+  ([node {:keys [operation? operator operands variable?] :as opts}]
+   (cond (operation? node)
+         (let [operator (operator node)
+               attr (get attrs operator)
+               [lhs rhs] (map #(tree->event % opts)
+                              (operands node))]
+           (if (= "__lshift__" attr)
+             (python/call-attr lhs attr #{rhs})
+             (python/call-attr lhs attr rhs)))
 
-        (variable? node)
-        (transforms/Identity (name node))
+         (variable? node)
+         (transforms/Identity (name node))
 
-        :else
-        node))
+         :else
+         node)))
 
 (defn ^:private identity->keyword
   [identity]
@@ -71,11 +76,7 @@
 
   proto/LogProb
   (logprob [_ event]
-    (let [opts {:operation? seq?
-                :operator first
-                :operands rest
-                :variable? symbol?}
-          event (tree->event event opts)]
+    (let [event (tree->event event)]
       (python/call-attr spn "logprob" event)))
 
   proto/Condition
@@ -97,7 +98,13 @@
   (variables [_]
     (->> (python/call-attr spn "get_symbols")
          (python/as-jvm)
-         (map identity->keyword))))
+         (map identity->keyword)))
+
+  proto/MutualInfo
+  (mutual-info [_ event-a event-b]
+    (let [event-a (tree->event event-a)
+          event-b (tree->event event-b)]
+      (python/call-attr spn "mutual_information" event-a event-b))))
 
 (defn slurp
   [f & opts]

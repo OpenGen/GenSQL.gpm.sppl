@@ -2,7 +2,10 @@
         medley/medley {:mvn/version "1.3.0"}
         probcomp/inferenceql.inference {:git/url "https://github.com/OpenIQL/inferenceql.inference.git"
                                         :sha "b23a4560856ac4d4d9f47cbb5d67b3c819a3c959"}}
- :aliases {:test {:extra-paths ["test/src"
+ :aliases {;; https://github.com/clj-python/libpython-clj/issues/180#issuecomment-949993210
+           :jdk-17 {:jvm-opts ["--add-modules" "jdk.incubator.foreign"
+                               "--enable-native-access=ALL-UNNAMED"]}
+           :test {:extra-paths ["test/src"
                                 "test/resources"]
                   :extra-deps {org.clojure/test.check {:mvn/version "0.10.0"}
                                lambdaisland/kaocha {:mvn/version "1.0-612"}}}

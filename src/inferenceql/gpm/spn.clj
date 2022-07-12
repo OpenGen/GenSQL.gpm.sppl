@@ -6,7 +6,7 @@
             [libpython-clj2.require :as require]
             [medley.core :as medley]))
 
-(require/require-python '[sppl.compilers.spn_to_dict :as spn_to_dict])
+(require/require-python '[sppl.compilers.spe_to_dict :as spe_to_dict])
 (require/require-python '[sppl.transforms :as transforms])
 (require/require-python '[json :as json])
 
@@ -110,5 +110,5 @@
   [f & opts]
   (-> (apply clojure.core/slurp f opts)
       (json/loads)
-      (spn_to_dict/spn_from_dict)
+      (spe_to_dict/spe_from_dict)
       (->SPN)))

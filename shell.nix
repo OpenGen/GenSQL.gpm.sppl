@@ -5,11 +5,11 @@ let
 
   sppl = pypkgs.buildPythonPackage rec { # not in nixpkgs
     pname = "sppl";
-    version = "1.2.1";
+    version = "2.0.4";
 
     src = pypkgs.fetchPypi {
       inherit pname version;
-      sha256 = "sha256-x47vrQeu96uCt+3ZfsVy80gTevOAILJIL2umEdkMCkM=";
+      sha256 = "sha256-QAp77L8RpN86V4O8F1zNA8O/szm9hNa4wWFT13av6BE=";
     };
 
     propagatedBuildInputs = with pypkgs; [

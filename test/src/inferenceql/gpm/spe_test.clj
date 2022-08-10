@@ -1,6 +1,7 @@
 (ns inferenceql.gpm.spe-test
   (:refer-clojure :exclude [slurp])
-  (:require [clojure.java.io :as io]
+  (:require [clojure.edn :as edn]
+            [clojure.java.io :as io]
             [clojure.test :refer [deftest is]]
             [inferenceql.gpm.spe :as spe]
             [inferenceql.inference.gpm :as gpm]))
@@ -21,3 +22,9 @@
 (deftest logprob
   (is (= 1.0 (+ (Math/exp (gpm/logprob spe '(>= height 170)))
                 (Math/exp (gpm/logprob spe '(< height 170)))))))
+
+(deftest round-trip
+  (let [rt-spe (edn/read-string {:readers spe/readers}
+                                (pr-str spe))]
+    (is (spe? rt-spe))
+    (is (= spe rt-spe))))

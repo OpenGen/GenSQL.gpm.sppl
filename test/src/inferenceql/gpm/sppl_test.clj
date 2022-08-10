@@ -9,7 +9,10 @@
   [x]
   (instance? inferenceql.gpm.sppl.SPE x))
 
-(def spe (sppl/json->SPE (slurp (io/resource "model.json"))))
+(def spe
+  (-> (io/resource "model.json")
+      (slurp)
+      (sppl/read-string)))
 
 (deftest json->spe
   (is (spe? spe)))

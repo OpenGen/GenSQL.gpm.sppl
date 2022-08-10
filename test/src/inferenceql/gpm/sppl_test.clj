@@ -1,18 +1,17 @@
-(ns inferenceql.gpm.spe-test
-  (:refer-clojure :exclude [slurp])
+(ns inferenceql.gpm.sppl-test
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.test :refer [deftest is]]
-            [inferenceql.gpm.spe :as spe]
+            [inferenceql.gpm.sppl :as sppl]
             [inferenceql.inference.gpm :as gpm]))
 
 (defn spe?
   [x]
-  (instance? inferenceql.gpm.spe.SPE x))
+  (instance? inferenceql.gpm.sppl.SPE x))
 
-(def spe (spe/slurp (io/resource "model.json")))
+(def spe (sppl/json->SPE (slurp (io/resource "model.json"))))
 
-(deftest slurp
+(deftest json->spe
   (is (spe? spe)))
 
 (deftest condition
@@ -24,7 +23,7 @@
                 (Math/exp (gpm/logprob spe '(< height 170)))))))
 
 (deftest round-trip
-  (let [rt-spe (edn/read-string {:readers spe/readers}
+  (let [rt-spe (edn/read-string {:readers sppl/readers}
                                 (pr-str spe))]
     (is (spe? rt-spe))
     (is (= spe rt-spe))))

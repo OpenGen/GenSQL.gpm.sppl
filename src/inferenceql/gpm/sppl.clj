@@ -1,4 +1,4 @@
-(ns inferenceql.gpm.spe
+(ns inferenceql.gpm.sppl
   (:refer-clojure :exclude [read slurp])
   (:require [inferenceql.inference.gpm :as gpm]
             [inferenceql.inference.gpm.proto :as proto]

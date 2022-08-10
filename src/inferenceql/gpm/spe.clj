@@ -1,5 +1,5 @@
-(ns inferenceql.gpm.spn
-  (:refer-clojure :exclude [slurp])
+(ns inferenceql.gpm.spe
+  (:refer-clojure :exclude [read slurp])
   (:require [inferenceql.inference.gpm :as gpm]
             [inferenceql.inference.gpm.proto :as proto]
             [libpython-clj2.python :as python]
@@ -58,45 +58,45 @@
        (medley/map-keys (comp transforms/Identity name))
        (python/->py-dict)))
 
-(defrecord SPN [spn]
+(defrecord SPE [spe]
   proto/GPM
   (logpdf [this targets conditions]
-    (let [{:keys [spn]} (cond-> this
+    (let [{:keys [spe]} (cond-> this
                           (seq conditions) (gpm/condition conditions))
           targets (map->dict targets)]
-      (python/call-attr spn "logpdf" targets)))
+      (python/call-attr spe "logpdf" targets)))
 
   (simulate [this targets conditions]
-    (let [{:keys [spn]} (cond-> this
+    (let [{:keys [spe]} (cond-> this
                           (seq conditions) (gpm/condition conditions))
           symbols (map (comp transforms/Identity name) targets)]
-      (->> (python/call-attr spn "sample_subset" symbols 1)
+      (->> (python/call-attr spe "sample_subset" symbols 1)
            (first)
            (dict->map))))
 
   proto/LogProb
   (logprob [_ event]
     (let [event (tree->event event)]
-      (python/call-attr spn "logprob" event)))
+      (python/call-attr spe "logprob" event)))
 
   proto/Condition
   (condition [this conditions]
     (if-not (seq conditions)
       this
-      (-> spn
+      (-> spe
           (python/call-attr "constrain" (map->dict conditions))
-          (->SPN))))
+          (->SPE))))
 
   proto/Constrain
   (constrain [_ event opts]
     (let [event (tree->event event opts)]
-      (-> spn
+      (-> spe
           (python/call-attr "condition" event)
-          (->SPN))))
+          (->SPE))))
 
   proto/Variables
   (variables [_]
-    (->> (python/call-attr spn "get_symbols")
+    (->> (python/call-attr spe "get_symbols")
          (python/as-jvm)
          (map identity->keyword)))
 
@@ -104,11 +104,11 @@
   (mutual-info [_ event-a event-b]
     (let [event-a (tree->event event-a)
           event-b (tree->event event-b)]
-      (python/call-attr spn "mutual_information" event-a event-b))))
+      (python/call-attr spe "mutual_information" event-a event-b))))
 
 (defn slurp
   [f & opts]
   (-> (apply clojure.core/slurp f opts)
       (json/loads)
       (spe_to_dict/spe_from_dict)
-      (->SPN)))
+      (->SPE)))

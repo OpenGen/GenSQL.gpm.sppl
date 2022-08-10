@@ -106,6 +106,32 @@
           event-b (tree->event event-b)]
       (python/call-attr spe "mutual_information" event-a event-b))))
 
+(def tag
+  "Tag used when writing a SPE via `clojure.core/print-method`."
+  'inferenceql.gpm.spe/SPE)
+
+(defmethod print-method SPE
+  [{:keys [spe]} writer]
+  (let [json (-> spe
+                 (spe_to_dict/spe_to_dict)
+                 (json/dumps))]
+    (.write writer "#")
+    (.write writer (pr-str tag))
+    (.write writer " ")
+    (.write writer (pr-str json))))
+
+(defn json->SPE
+  "Creates a SPE from a JSON string."
+  [json]
+  (-> json
+      (json/loads)
+      (spe_to_dict/spe_from_dict)
+      (->SPE)))
+
+(def readers
+  "Data readers for use with `clojure.edn/read` and `clojure.edn/read-string`."
+  {tag json->SPE})
+
 (defn slurp
   [f & opts]
   (-> (apply clojure.core/slurp f opts)

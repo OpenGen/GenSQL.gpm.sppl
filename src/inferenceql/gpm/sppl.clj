@@ -1,5 +1,5 @@
 (ns inferenceql.gpm.sppl
-  (:refer-clojure :exclude [read slurp])
+  (:refer-clojure :exclude [read-string slurp])
   (:require [inferenceql.inference.gpm :as gpm]
             [inferenceql.inference.gpm.proto :as proto]
             [libpython-clj2.python :as python]
@@ -120,8 +120,8 @@
     (.write writer " ")
     (.write writer (pr-str json))))
 
-(defn json->SPE
-  "Creates a SPE from a JSON string."
+(defn read-string
+  "Reads an SPE value from input `String`."
   [json]
   (-> json
       (json/loads)
@@ -130,7 +130,7 @@
 
 (def readers
   "Data readers for use with `clojure.edn/read` and `clojure.edn/read-string`."
-  {tag json->SPE})
+  {tag read-string})
 
 (defn slurp
   [f & opts]

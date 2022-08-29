@@ -1,7 +1,6 @@
 {:deps {clj-python/libpython-clj {:mvn/version "2.016"}
-        medley/medley {:mvn/version "1.3.0"}
-        inferenceql/inferenceql.inference {:git/url "https://github.com/InferenceQL/inferenceql.inference.git"
-                                           :sha "6938e350673f93bc8383975d92e305ff6872cf61"}}
+        io.github.inferenceql/inferenceql.inference {:git/sha "e1dcd0f2721dcdef388f8270dc9bd80eecde3ef9"}
+        medley/medley {:mvn/version "1.3.0"}}
  :aliases {;; https://github.com/clj-python/libpython-clj/issues/180#issuecomment-949993210
            :jdk-17 {:jvm-opts ["--add-modules" "jdk.incubator.foreign"
                                "--enable-native-access=ALL-UNNAMED"]}

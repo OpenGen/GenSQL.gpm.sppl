@@ -19,14 +19,8 @@ jobs:
         with:
           tools-deps: 1.11.1.1155
 
-      - name: Setup node
-        uses: actions/setup-node@v1
-
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Install ws
-        run: npm install ws
 
       - name: Cache m2
         uses: actions/cache@v2
@@ -47,7 +41,7 @@ jobs:
           key: pip-${{ hashFiles('requirements.txt', 'requirements-sppl.txt') }}
 
       - name: Prepare Clojure dependencies
-        run: clojure -M:readme:test -P
+        run: clojure -A:test -P
 
       - name: Install Python dependencies
         run: |
@@ -55,8 +49,5 @@ jobs:
           pip install -r requirements.txt
           pip install --no-deps "$(cat requirements-sppl.txt)"
 
-      - name: Run tests in README
-        run: clojure -M:readme
-
       - name: Run tests
-        run: bin/kaocha --reporter documentation --plugin kaocha.plugin/profiling
+        run: clojure -M:test

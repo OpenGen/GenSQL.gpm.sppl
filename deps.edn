@@ -5,9 +5,13 @@
  :aliases {;; https://github.com/clj-python/libpython-clj/issues/180#issuecomment-949993210
            :jdk-17 {:jvm-opts ["--add-modules" "jdk.incubator.foreign"
                                "--enable-native-access=ALL-UNNAMED"]}
+
            :test {:extra-paths ["test/src"
                                 "test/resources"]
-                  :extra-deps {org.clojure/test.check {:mvn/version "0.10.0"}
-                               lambdaisland/kaocha {:mvn/version "1.0-612"}}}
+                  :extra-deps {io.github.cognitect-labs/test-runner {:git/tag "v0.5.1" :git/sha "dfb30dd"}
+                               org.clojure/test.check {:mvn/version "0.10.0"}}
+                  :main-opts ["-m" "cognitect.test-runner"]
+                  :exec-fn cognitect.test-runner.api/test}
+
            :readme {:extra-deps {seancorfield/readme {:mvn/version "1.0.13"}}
                     :main-opts ["-m" "seancorfield.readme"]}}}

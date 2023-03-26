@@ -54,7 +54,7 @@
 
 (defn ^:private map->dict
   [m]
-  (->> m
+  (->> (select-keys m (for [[k v] m :when (not= v "")] k))
        (medley/map-keys (comp transforms/Identity name))
        (python/->py-dict)))
 

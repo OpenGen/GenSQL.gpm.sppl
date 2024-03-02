@@ -40,18 +40,39 @@
           pipInstallFlags = [ "--no-deps" ];
         };
 
-        python = nixpkgs-sppl.legacyPackages.${system}.python39.withPackages (p: [ sppl ]);
-      in {
-        devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [
+        runtimePython = platform: nixpkgs-sppl.legacyPackages.${platform}.python39.withPackages (p: [ sppl ]);
+
+        runtimeDeps = platform: let
+          pkgs = nixpkgs.legacyPackages.${platform};
+          python = runtimePython platform;
+        in with pkgs; [
             clj-kondo
             clojure
             git
             openjdk11
             python
-          ];
+        ];
+
+        devShell = let
+          python  = runtimePython system;
+        in pkgs.mkShell {
+          buildInputs = runtimeDeps "${system}";
 
           shellHook = "export PYTHONPATH=${python}/${python.sitePackages}";
+        };
+
+        ociImg = pkgs.dockerTools.buildImage {
+          name = "inferenceql.gpm.sppl";
+          copyToRoot = runtimeDeps "x86_64-linux";
+          # config = {
+          #   Cmd = [ "${ociBin}/bin/${pname}" ];
+          # };
+        };
+      in {
+        inherit devShell;
+
+        packages = {
+          inherit ociImg;
         };
       }
     );

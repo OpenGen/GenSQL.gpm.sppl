@@ -10,7 +10,39 @@ This library is not compatible with Python virtual environments; for isolation t
 
 ## Prerequisites
 
-Python and [SPPL](https://github.com/probcomp/sppl) must be installed. To install the version of SPPL and its dependencies that this library has been tested with, run:
+Nix must be installed with flake support. 
+
+Run `nix develop` to get a shell with all the necessary dependencies installed.
+
+If your editor / REPL has issues getting the necessary env vars for the correct versions/locations of stuff from the 
+shell (likely with macOS GUI programs), start a remote REPL from the nix develop shell and connect to that REPL 
+from your editor.
+
+If you're using nREPL and deps.edn, you can add the following alias:
+
+``` clojure
+;; deps.edn
+{
+;; ...
+:aliases {:nREPL
+          {:extra-deps
+            {nrepl/nrepl {:mvn/version "1.1.1"}}}}
+}
+```
+
+Then start an nREPL server by running:
+
+```shell
+clj -A:test -M:nREPL -m nrepl.cmdline
+```
+
+(See https://nrepl.org/nrepl/usage/server.html for more ways to set up, like with Leiningen, or CIDER middleware for Emacs.)
+
+Finally, connect to the running remote REPL with your editor's remote nREPL method.
+
+### Old, non-nix prerequisite setup method
+
+Python and [SPPL](https://github.com/probsys/sppl) must be installed. To install the version of SPPL and its dependencies that this library has been tested with, run:
 
 ``` shell
 pip install -r requirements.txt

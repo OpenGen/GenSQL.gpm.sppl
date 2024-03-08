@@ -1,7 +1,7 @@
-(ns inferenceql.gpm.sppl
+(ns gensql.gpm.sppl
   (:refer-clojure :exclude [read-string slurp])
-  (:require [inferenceql.inference.gpm :as gpm]
-            [inferenceql.inference.gpm.proto :as proto]
+  (:require [gensql.inference.gpm :as gpm]
+            [gensql.inference.gpm.proto :as proto]
             [libpython-clj2.python :as python]
             [libpython-clj2.require :as require]
             [medley.core :as medley]))
@@ -11,20 +11,20 @@
 (require/require-python '[json :as json])
 
 (def attrs
-  '{>= "__ge__"
-    > "__gt__"
-    = "__lshift__"
-    <= "__le__"
-    < "__lt__"
+  '{>=  "__ge__"
+    >   "__gt__"
+    =   "__lshift__"
+    <=  "__le__"
+    <   "__lt__"
     and "__and__"
-    or "__or__"})
+    or  "__or__"})
 
 (defn ^:private tree->event
   ([node]
    (tree->event node {:operation? seq?
-                      :operator first
-                      :operands rest
-                      :variable? symbol?}))
+                      :operator   first
+                      :operands   rest
+                      :variable?  symbol?}))
   ([node {:keys [operation? operator operands variable?] :as opts}]
    (cond (operation? node)
          (let [operator (operator node)
@@ -62,13 +62,13 @@
   proto/GPM
   (logpdf [this targets conditions]
     (let [{:keys [spe]} (cond-> this
-                          (seq conditions) (gpm/condition conditions))
+                                (seq conditions) (gpm/condition conditions))
           targets (map->dict targets)]
       (python/call-attr spe "logpdf" targets)))
 
   (simulate [this targets conditions]
     (let [{:keys [spe]} (cond-> this
-                          (seq conditions) (gpm/condition conditions))
+                                (seq conditions) (gpm/condition conditions))
           symbols (map (comp transforms/Identity name) targets)]
       (->> (python/call-attr spe "sample_subset" symbols 1)
            (first)
@@ -108,7 +108,7 @@
 
 (def tag
   "Tag used when writing a SPE via `clojure.core/print-method`."
-  'inferenceql.gpm.spe/SPE)
+  'gensql.gpm.spe/SPE)
 
 (defmethod print-method SPE
   [{:keys [spe]} writer]

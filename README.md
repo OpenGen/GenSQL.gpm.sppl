@@ -1,8 +1,8 @@
-# inferenceql.gpm.sppl
-![tests](https://github.com/InferenceQL/inferenceql.gpm.spn/workflows/tests/badge.svg)
-![linter](https://github.com/InferenceQL/inferenceql.gpm.spn/workflows/linter/badge.svg)
+# GenSQL.gpm.sppl
+![tests](https://github.com/OpenGen/GenSQL.gpm.sppl/workflows/tests/badge.svg)
+![linter](https://github.com/OpenGen/GenSQL.gpm.sppl/workflows/linter/badge.svg)
 
-An implementation of the [generative probabilistic model](https://github.com/probcomp/inferenceql.inference) interface that delegates to a SPPL sum-product expression.
+An implementation of the [generative probabilistic model](https://github.com/OpenGen/GenSQL.inference) interface that delegates to a SPPL sum-product expression.
 
 ## Compatibility
 
@@ -66,10 +66,10 @@ Make note of the Python executable being used in the output of `python/initializ
 
 For more information, including documentation about how to initialize libpython-clj on a system where multiple versions of Python are installed, refer to [libpython-clj's documentation](https://clj-python.github.io/libpython-clj/).
 
-Once libpython-clj has been initialized SPPL models that have been serialized to JSON can be read with `inferenceql.gpm.sppl/read-string`:
+Once libpython-clj has been initialized SPPL models that have been serialized to JSON can be read with `gensql.gpm.sppl/read-string`:
 
 ``` clojure
-(require '[inferenceql.gpm.sppl :as sppl])
+(require '[gensql.gpm.sppl :as sppl])
 
 (def model (sppl/read-string (slurp "path/to/model.json")))
 ```

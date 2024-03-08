@@ -30,3 +30,8 @@
                                 (pr-str spe))]
     (is (spe? rt-spe))
     (is (= spe rt-spe))))
+
+(deftest str-variables
+  (is (= true (every? string? (gpm/variables spe))))
+  (is (number? (gpm/logpdf spe {"gender" "male"} {"age" 21})))
+  (is (= true (spe? (gpm/condition spe {"height" 160 "child" "1"})))))

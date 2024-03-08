@@ -41,16 +41,16 @@
          :else
          node)))
 
-(defn ^:private identity->keyword
+(defn ^:private identity->str
   [identity]
-  (keyword (python/get-attr identity "token")))
+  (str (python/get-attr identity "token")))
 
 (defn ^:private dict->map
   [dict]
   (->> dict
        (python/as-jvm)
        (into {})
-       (medley/map-keys identity->keyword)))
+       (medley/map-keys identity->str)))
 
 (defn ^:private map->dict
   [m]
@@ -98,7 +98,7 @@
   (variables [_]
     (->> (python/call-attr spe "get_symbols")
          (python/as-jvm)
-         (map identity->keyword)))
+         (map identity->str)))
 
   proto/MutualInfo
   (mutual-info [_ event-a event-b]

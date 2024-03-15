@@ -10,6 +10,9 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
+        # in OCI context, whatever our host platform we want to build same arch but linux
+        systemWithLinux = builtins.replaceStrings [ "darwin" ] [ "linux" ] system;
+
         pypkgs = nixpkgs-sppl.legacyPackages.${system}.python39Packages;
 
         sppl = pypkgs.buildPythonPackage rec { # not in nixpkgs
@@ -48,31 +51,30 @@
         in with pkgs; [
             clj-kondo
             clojure
-            git
             openjdk11
             python
+            git
+            bashInteractive
         ];
 
         devShell = let
           python  = runtimePython system;
         in pkgs.mkShell {
-          buildInputs = runtimeDeps "${system}";
+          buildInputs = runtimeDeps system;
 
           shellHook = "export PYTHONPATH=${python}/${python.sitePackages}";
         };
 
         ociImg = pkgs.dockerTools.buildImage {
           name = "inferenceql.gpm.sppl";
-          copyToRoot = runtimeDeps "x86_64-linux";
-          # config = {
-          #   Cmd = [ "${ociBin}/bin/${pname}" ];
-          # };
+          copyToRoot = runtimeDeps systemWithLinux ;
         };
       in {
         inherit devShell;
 
         packages = {
-          inherit ociImg;
+          inherit ociImg sppl;
+          pythonWithSppl = runtimePython system;
         };
       }
     );

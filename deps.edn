@@ -1,5 +1,5 @@
 {:deps {clj-python/libpython-clj {:mvn/version "2.023"}
-        io.github.inferenceql/inferenceql.inference {:git/sha "40e77dedf680b7936ce988b66186a86f5c4db6a5"}
+        io.github.inferenceql/inferenceql.inference {:git/sha "c3cef474ba964a37fc2e5ff667055f5b77e12c45"}
         medley/medley {:mvn/version "1.3.0"}}
 
  :aliases {:test {:extra-paths ["test/src"
